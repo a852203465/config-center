@@ -1,0 +1,13 @@
+spring:
+
+  application:
+    name: config
+
+  profiles:
+    active: native
+    include: dev
+
+  cloud:
+    config:
+      server:
+        prefix: /static/**

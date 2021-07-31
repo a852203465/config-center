@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <title>配置中心</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.0/css/fileinput.min.css" media="all"
+          rel="stylesheet" type="text/css"/>
+
+    <style>
+
+        html {
+            position: relative;
+            min-height: 100%;
+        }
+
+        body {
+            /* Margin bottom by footer height */
+            margin-bottom: 60px;
+        }
+
+        .row {
+            /*flex 布局*/
+            display: flex;
+            /*实现垂直居中*/
+            align-items: center;
+            /*实现水平居中*/
+            justify-content: center;
+            text-align: justify;
+            margin: 0 auto;
+        }
+
+        .footer {
+            position: absolute; /*相对于父元素contanier定位*/
+            width: 100%;
+            bottom: 0; /*始终距离它的父元素的底部为0px.则是处于父元素的最底*/
+        }
+
+        .footer {
+            position: absolute;
+            width: 100%;
+            background-color: #333;
+            color: #eee;
+            text-align: center;
+            font-size: 16px;
+            height: 50px;
+        }
+
+        .footer .text-center {
+            line-height: 50px;
+        }
+
+    </style>
+</head>
+<body>
+<!--头部-->
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="example-navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a class="icon-bar" href="#">Spring Cloud Config 配置中心</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a>欢迎您, 使用配置中心</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- 修改 -->
+<div class="modal fade" id="fileEditMadel" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="fileEditMadel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content" style="height: 600px; overflow: auto;">
+            <div class="modal-header">
+                <h4 class="modal-title" id="fileEditMadelLabel"></h4>
+                <select id="exThemeEdit" style="float: right">
+                    <option>深夜黑(默认)</option>
+                    <option>粉字白</option>
+                    <option>深海蓝</option>
+                    <option>污水黑</option>
+                    <option>蓝字白</option>
+                    <option>青字白</option>
+                </select>
+            </div>
+            <div class="modal-body" style="height: 75%;">
+                    <pre id="codeEdit" class="ace_editor" style="height: 95%; ">
+                        <textarea id="fileEditMadelBody" class="ace_text-input"></textarea>
+                    </pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="fileEditMadelClose()">关闭
+                </button>
+                <button type="button" class="btn btn-primary" onclick="fileEditMadelSave()">提交更改</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--详情-->
+<div class="modal fade" id="fileDetailsMadel" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="fileDetailsMadel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content" style="height: 600px; overflow: auto;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="fileDetailsMadelClose()">x</button>
+                <h4 class="modal-title" id="fileDetailsMadelLabel"></h4>
+                <select id="exThemeDetails" style="float: right">
+                    <option>深夜黑(默认)</option>
+                    <option>粉字白</option>
+                    <option>深海蓝</option>
+                    <option>污水黑</option>
+                    <option>蓝字白</option>
+                    <option>青字白</option>
+                </select>
+            </div>
+            <div class="modal-body" style="height: 86%;">
+                <pre id="codeDetails" class="ace_editor" style="height: 97%;">
+                        <textarea id="fileDetailsMadelBody" class="ace_text-input"></textarea>
+                </pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 上传文件 -->
+<div class="modal fade" id="fileModal" tabindex="-1" data-backdrop="static" role="dialog" aria-labelledby="fileModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="uploadFileClose()">x</button>
+                <h4 class="modal-title" id="modalLabel">请选择文件</h4>
+                <form enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input id="file-Portrait1" name="file" class="file" type="file" multiple>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--table-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="btn-group" id="toolbar">
+            <div class="col-sm-5">
+                <button class="btn btn-w-m btn-primary glyphicon glyphicon-plus"
+                        data-toggle="modal" data-keyboard="true" data-backdrop="false"
+                        id="btnAdd" data-target="#fileModal">
+                    <span style="font-size:16px;">新增</span>
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-10" id="data">
+            <table id="table"
+                   class="table table-responsive table-striped table-bordered table-hover table-condensed">
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 底部页脚部分 -->
+<div class="footer">
+    <p class="text-center">
+        CopyRight©2021 Rong.Jia AllMobilize Inc.
+    </p>
+</div>
+</body>
+<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-table/1.16.0/locale/bootstrap-table-zh-CN.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.0/js/fileinput.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.0/js/locales/zh.js"></script>
+<script src="assets/src-noconflict/ace.js" type="text/javascript" charset="UTF-8"></script>
+<script src="assets/src-noconflict/ext-language_tools.js" type="text/javascript"></script>
+<script src="js/request.js"></script>
+<script src="js/index.js"></script>
+
+<script>
+    showTable();
+    initFileInput();
+</script>
+
+</html>
